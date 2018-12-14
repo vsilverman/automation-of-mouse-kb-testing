@@ -14,6 +14,7 @@ Created on Nov 16, 2018
 from selenium import webdriver
 # from selenium.webdriver import ActionChains
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.support.ui import Select
@@ -95,6 +96,46 @@ class MyAutoActions(unittest.TestCase):
         action_chains.send_keys_to_element(testarea, "abcdefghijklmnopqrstuvwxyz")
         action_chains.perform()
         time.sleep(1)
+
+    def test_kb_special_keys(self):
+        driver = self.driver
+        driver.get("https://keyboardtester.co/keyboard-tester.html")
+        action_chains = ActionChains(driver)  # type: ActionChains
+        testarea = driver.find_element_by_id("testarea")
+        action_chains.click(testarea)
+        action_chains.send_keys(Keys.ARROW_DOWN)
+        action_chains.send_keys(Keys.ARROW_UP)
+        action_chains.send_keys(Keys.ARROW_LEFT)
+        action_chains.send_keys(Keys.ARROW_RIGHT)
+        action_chains.send_keys(Keys.ALT)
+        action_chains.send_keys(Keys.BACKSPACE)
+        action_chains.send_keys(Keys.COMMAND)
+        action_chains.send_keys(Keys.CONTROL)
+        action_chains.send_keys(Keys.ENTER)
+        action_chains.send_keys(Keys.EQUALS)
+        action_chains.send_keys(Keys.ESCAPE)
+        action_chains.send_keys(Keys.F1)
+        action_chains.send_keys(Keys.F2)
+        action_chains.send_keys(Keys.F3)
+        action_chains.send_keys(Keys.F4)
+        action_chains.send_keys(Keys.F5)
+        action_chains.send_keys(Keys.F6)
+        action_chains.send_keys(Keys.F7)
+        action_chains.send_keys(Keys.F8)
+        action_chains.send_keys(Keys.F9)
+        action_chains.send_keys(Keys.F10)
+        action_chains.send_keys(Keys.F11)
+        action_chains.send_keys(Keys.F12)
+        action_chains.send_keys(Keys.RETURN)
+        action_chains.send_keys(Keys.TAB)
+        action_chains.send_keys(Keys.SHIFT)
+        action_chains.send_keys(Keys.LEFT_ALT)
+        action_chains.send_keys(Keys.LEFT_CONTROL)
+        action_chains.send_keys(Keys.LEFT_SHIFT)
+        action_chains.send_keys(Keys.SPACE)
+        action_chains.perform()
+        time.sleep(10)
+        assert ("No critical errors found." not in driver.page_source)
 
     def is_element_present(self, how, what):
         try:
