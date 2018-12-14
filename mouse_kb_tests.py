@@ -12,6 +12,7 @@ Created on Nov 16, 2018
 
 # -*- coding: utf-8 -*-
 from selenium import webdriver
+# from selenium.webdriver import ActionChains
 from selenium.webdriver.common.action_chains import ActionChains
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.keys import Keys
@@ -21,23 +22,25 @@ from selenium.common.exceptions import NoAlertPresentException
 # import os
 import unittest
 import time
-# import re
 
 
 class MyAutoActions(unittest.TestCase):
 
     @classmethod
+    def setUpClass(cls):
+        print("MyAutoActons Test Case started...\n")
+        cls.verificationErrors = []
+        cls.accept_next_alert = True
+
     def setUp(self):
         self.driver = webdriver.Chrome("chromedriver")
         self.driver.implicitly_wait(30)
-        self.verificationErrors = []
-        self.accept_next_alert = True
-        self.base_url = "https://unixpapa.com/js/testmouse.html"
-        self.driver.get(self.base_url)
+        self.wait = 1
 
     def test_mouse_single_clicks(self):
         driver = self.driver
-        # ERROR: Caught exception [unknown command [#]]
+        driver.get("https://unixpapa.com/js/testmouse.html")
+        time.sleep(1)  # Let the user actually see something!
         for i in range(3):
             driver.find_element_by_link_text("click here to test").click()
             elem = driver.find_element_by_xpath(
@@ -48,14 +51,15 @@ class MyAutoActions(unittest.TestCase):
 
     def test_mouse_action_chains(self):
         driver = self.driver
-        actionChains = ActionChains(driver)
+        driver.get("https://unixpapa.com/js/testmouse.html")
+        action_chains = ActionChains(driver)  # type: ActionChains
         elem = driver.find_element_by_link_text("click here to test")
-        actionChains.click(elem)
-        actionChains.click(elem)
-        actionChains.click(elem)
+        action_chains.click(elem)
+        action_chains.click(elem)
+        action_chains.click(elem)
         time.sleep(2)
-        actionChains.double_click(elem)
-        actionChains.perform()
+        action_chains.double_click(elem)
+        action_chains.perform()
         time.sleep(2)
 
     def test_kb_single_clicks(self):
@@ -66,16 +70,37 @@ class MyAutoActions(unittest.TestCase):
         for i in range(10):  # numbers from 0 to 9
             testarea.clear()
             testarea.send_keys(i)
-            time.sleep(1)
+            if self.wait > 0:
+                time.sleep(self.wait)
         for char in "abcdefghijklmnopqrstuvwxyz":
             testarea.clear()
             testarea.send_keys(char)
-            time.sleep(1)
+            if self.wait > 0:
+                time.sleep(self.wait)
+
+    def test_kb_fast_clicks(self):
+        self.wait = 0
+        self.test_kb_single_clicks()
+
+    def test_kb_action_chains(self):
+        driver = self.driver
+        driver.get("https://keyboardtester.co/keyboard-tester.html")
+        action_chains = ActionChains(driver)  # type: ActionChains
+        testarea = driver.find_element_by_id("testarea")
+        action_chains.click(testarea)
+        action_chains.send_keys_to_element(testarea, "0123456789")
+        action_chains.perform()
+        time.sleep(1)
+        testarea.clear()
+        action_chains.send_keys_to_element(testarea, "abcdefghijklmnopqrstuvwxyz")
+        action_chains.perform()
+        time.sleep(1)
 
     def is_element_present(self, how, what):
         try:
             self.driver.find_element(by=how, value=what)
         except NoSuchElementException as e:
+            print(e.stacktrace)
             return False
         return True
     
@@ -83,6 +108,7 @@ class MyAutoActions(unittest.TestCase):
         try:
             self.driver.switch_to.alert()
         except NoAlertPresentException as e:
+            print(e.stacktrace)
             return False
         return True
     
@@ -98,10 +124,13 @@ class MyAutoActions(unittest.TestCase):
         finally:
             self.accept_next_alert = True
 
-    @classmethod
     def tearDown(self):
+        self.assertEqual(self.verificationErrors, [])
         self.driver.quit()
-        self.assertEqual([], self.verificationErrors)
+
+    @classmethod
+    def tearDownClass(cls):
+        print("\nMyAutoActons Test Case ended")
 
 
 if __name__ == "__main__":

@@ -3,9 +3,9 @@ This repo shows sample of automating mouse and keyboard testing inside the brows
 
 ## Steps to Execute This Sample
 
--	Clone this sample by using e.g. the following command
+-	After forking this sample clone it by using e.g. the following command
 
-			git clone <git-address-of-this-repo>
+			git clone <git-address-of-forked-repo>
 
 -	Verify that python is available on your machine
 	(in case python is not available just install it)
